@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PlaylistData } from '../types/media';
-import { PlayCircle } from 'lucide-react';
+import { PlayCircle, AlertCircle } from 'lucide-react';
 import { useMediaDownload, downloadMedia } from '../hooks/useMediaDownload';
 import DownloadProgress from './DownloadProgress';
 
 interface PlayerProps {
-  playlist: PlaylistData;
+  playlist?: PlaylistData | null;
 }
 
 export default function Player({ playlist }: PlayerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -18,17 +18,19 @@ export default function Player({ playlist }: PlayerProps) {
   const clearDownloads = useMediaDownload((state) => state.clearDownloads);
   const cleanupUnusedMedia = useMediaDownload((state) => state.cleanupUnusedMedia);
 
-  const hasContent = playlist.medias.data.length > 0;
-  const currentMedia = hasContent ? playlist.medias.data[currentIndex] : null;
+  const hasContent = playlist?.medias.data.length && playlist?.medias.data.length > 0;
+  const currentMedia = hasContent ? playlist?.medias.data[currentIndex] : null;
 
-  const downloadStats = {
+  const downloadStats = playlist ? {
     total: playlist.medias.data.length,
     completed: Object.values(downloads).filter(d => d.status === 'complete').length,
     failed: Object.values(downloads).filter(d => d.status === 'error').length,
     inProgress: Object.values(downloads).filter(d => d.status === 'downloading').length,
-  };
+  } : null;
 
   useEffect(() => {
+    if (!playlist) return;
+
     // Reset current index when playlist changes
     setCurrentIndex(0);
 
@@ -36,6 +38,10 @@ export default function Player({ playlist }: PlayerProps) {
     cleanupUnusedMedia(playlist);
 
     async function downloadAllMedia() {
+      if (!hasContent){
+        return;
+      }
+
       setIsLoading(true);
 
       try {
@@ -57,7 +63,8 @@ export default function Player({ playlist }: PlayerProps) {
   }, [playlist]);
 
   const handleMediaEnd = () => {
-    setCurrentIndex((prev) => (prev + 1) % playlist.medias.data.length);
+    if (!hasContent) return;
+    setCurrentIndex((prev) => (prev + 1) % (playlist?.medias.data.length || 1));
   };
 
   useEffect(() => {
@@ -85,6 +92,20 @@ export default function Player({ playlist }: PlayerProps) {
       }
     };
   }, [currentIndex, currentMedia, downloads]);
+
+  if (!playlist) {
+    return (
+      <div className="w-full h-full bg-black rounded-lg overflow-hidden shadow-2xl flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center space-y-4 p-8 text-center">
+          <AlertCircle className="w-16 h-16 text-yellow-500" />
+          <h2 className="text-xl font-semibold text-white">No Schedule</h2>
+          <p className="text-gray-400">
+            There are no schedules available to display media content at the moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const renderMedia = () => {
     if (!currentMedia || isLoading) {
@@ -134,7 +155,7 @@ export default function Player({ playlist }: PlayerProps) {
     <div className="relative w-full h-full bg-black rounded-lg overflow-hidden shadow-2xl">
       {renderMedia()}
 
-      {isLoading && (
+      {isLoading && downloadStats && (
         <DownloadProgress {...downloadStats} />
       )}
 

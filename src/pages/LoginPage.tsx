@@ -1,5 +1,5 @@
 import { KeyRound } from 'lucide-react';
-// import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
 
 interface LocationState {
@@ -7,7 +7,7 @@ interface LocationState {
 }
 
 export default function LoginPage() {
-  // const { login } = useAuth();
+  const { login } = useAuth();
   const location = useLocation();
   const { code = '----' } = (location.state as LocationState) || {};
 
@@ -29,15 +29,15 @@ export default function LoginPage() {
             </div>
 
             <p className="text-gray-400 text-center text-sm">
-              Please enter this code in admin panel to link this device to your account
+              Please enter this code in your authentication device to continue
             </p>
 
-            {/*<button*/}
-            {/*  onClick={() => login()}*/}
-            {/*  className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"*/}
-            {/*>*/}
-            {/*  Simulate Login*/}
-            {/*</button>*/}
+            <button
+              onClick={() => login()}
+              className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              Simulate Login
+            </button>
           </div>
         </div>
       </div>
