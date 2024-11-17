@@ -2,10 +2,17 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IPC } from '../ipc';
 import { useAuth } from './useAuth';
-import type { LoginFailureData, AuthScreenData, PlayerStartData } from '../ipc/types';
+import { useConnection } from './useConnection';
+import type { 
+  LoginFailureData, 
+  AuthScreenData, 
+  PlayerStartData,
+  ConnectionData 
+} from '../ipc/types';
 
 export function useIPC() {
   const { login, logout } = useAuth();
+  const { updateConnection } = useConnection();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
 
@@ -33,6 +40,11 @@ export function useIPC() {
     }
   }, [navigate]);
 
+  const connectionHandler = useCallback((data: ConnectionData) => {
+    console.log(`[IPC] ${data.type} connection established:`, data);
+    updateConnection(data);
+  }, [updateConnection]);
+
   useEffect(() => {
     if (!isRegistered.current) {
       const ipc = window.IPC || IPC;
@@ -40,7 +52,14 @@ export function useIPC() {
       ipc.onLoginFail(loginFailHandler);
       ipc.onShowAuthScreen(showAuthHandler);
       ipc.onPlayerStart(playerStartHandler);
+      ipc.onConnectionEstablished(connectionHandler);
       isRegistered.current = true;
     }
-  }, [loginSuccessHandler, loginFailHandler, showAuthHandler, playerStartHandler]);
+  }, [
+    loginSuccessHandler, 
+    loginFailHandler, 
+    showAuthHandler, 
+    playerStartHandler,
+    connectionHandler
+  ]);
 }

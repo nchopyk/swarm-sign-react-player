@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PlaylistData } from '../types/media';
 import { PlayCircle } from 'lucide-react';
 import { useMediaDownload, downloadMedia } from '../hooks/useMediaDownload';
@@ -90,7 +90,7 @@ export default function Player({ playlist }: PlayerProps) {
     if (!currentMedia || isLoading) {
       return (
         <div className="flex flex-col items-center justify-center h-full space-y-4">
-          <PlayCircle className="w-16 h-16 text-gray-600"/>
+          <PlayCircle className="w-16 h-16 text-gray-600" />
           <div className="text-center">
             <h3 className="text-lg font-medium text-gray-300">
               {isLoading ? 'Loading Media...' : 'No Content Available'}

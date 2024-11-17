@@ -1,9 +1,5 @@
 export interface LoginSuccessData {
   token: string;
-  user: {
-    id: string;
-    email: string;
-  };
 }
 
 export interface LoginFailureData {
@@ -16,7 +12,13 @@ export interface AuthScreenData {
 }
 
 export interface PlayerStartData {
-  schedule: any; // Type will be replaced with actual schedule type
+  schedule: any;
+}
+
+export interface ConnectionData {
+  type: 'master' | 'server';
+  address: string;
+  port: number;
 }
 
 export interface IPCHandlers {
@@ -24,6 +26,7 @@ export interface IPCHandlers {
   onLoginFail: (callback: (data: LoginFailureData) => void) => void;
   onShowAuthScreen: (callback: (data: AuthScreenData) => void) => void;
   onPlayerStart: (callback: (data: PlayerStartData) => void) => void;
+  onConnectionEstablished: (callback: (data: ConnectionData) => void) => void;
 }
 
 declare global {

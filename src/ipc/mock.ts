@@ -3,59 +3,51 @@ import { ipcCommands } from './commands';
 
 // Mock event system for browser environment
 class EventEmitter {
-  private handlers: Map<string, Set<Function>> = new Map();
+  private handlers: { [key: string]: Function[] } = {};
 
   on(event: string, handler: Function) {
-    if (!this.handlers.has(event)) {
-      this.handlers.set(event, new Set());
+    if (!this.handlers[event]) {
+      this.handlers[event] = [];
     }
-    this.handlers.get(event)!.add(handler);
-  }
-
-  removeListener(event: string, handler: Function) {
-    const handlers = this.handlers.get(event);
-    if (handlers) {
-      handlers.delete(handler);
-      if (handlers.size === 0) {
-        this.handlers.delete(event);
-      }
-    }
-  }
-
-  removeAllListeners(event?: string) {
-    if (event) {
-      this.handlers.delete(event);
-    } else {
-      this.handlers.clear();
-    }
+    this.handlers[event].push(handler);
   }
 
   emit(event: string, ...args: any[]) {
-    const handlers = this.handlers.get(event);
-    if (handlers) {
-      handlers.forEach(handler => handler(...args));
+    if (this.handlers[event]) {
+      this.handlers[event].forEach(handler => handler(...args));
     }
   }
 }
 
 const mockIpcRenderer = new EventEmitter();
 
+// Simulate connection established events after a delay
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.CONNECTION_ESTABLISHED, {
+    type: 'master',
+    address: '192.168.1.100',
+    port: 8080
+  });
+}, 1500);
+
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.CONNECTION_ESTABLISHED, {
+    type: 'server',
+    address: '10.0.0.50',
+    port: 9000
+  });
+}, 3000);
+
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
-  onLoginSuccess: (callback) => {
-    mockIpcRenderer.on(ipcCommands.LOGIN_SUCCESS, callback);
-    return () => mockIpcRenderer.removeListener(ipcCommands.LOGIN_SUCCESS, callback);
-  },
-  onLoginFail: (callback) => {
-    mockIpcRenderer.on(ipcCommands.LOGIN_FAILURE, callback);
-    return () => mockIpcRenderer.removeListener(ipcCommands.LOGIN_FAILURE, callback);
-  },
-  onShowAuthScreen: (callback) => {
-    mockIpcRenderer.on(ipcCommands.SHOW_AUTH_SCREEN, callback);
-    return () => mockIpcRenderer.removeListener(ipcCommands.SHOW_AUTH_SCREEN, callback);
-  },
-  onPlayerStart: (callback) => {
-    mockIpcRenderer.on(ipcCommands.START_PLAYER, callback);
-    return () => mockIpcRenderer.removeListener(ipcCommands.START_PLAYER, callback);
-  }
+  onLoginSuccess: (callback) => 
+    mockIpcRenderer.on(ipcCommands.LOGIN_SUCCESS, (data) => callback(data)),
+  onLoginFail: (callback) => 
+    mockIpcRenderer.on(ipcCommands.LOGIN_FAILURE, (data) => callback(data)),
+  onShowAuthScreen: (callback) => 
+    mockIpcRenderer.on(ipcCommands.SHOW_AUTH_SCREEN, (code) => callback(code)),
+  onPlayerStart: (callback) => 
+    mockIpcRenderer.on(ipcCommands.START_PLAYER, (schedule) => callback(schedule)),
+  onConnectionEstablished: (callback) =>
+    mockIpcRenderer.on(ipcCommands.CONNECTION_ESTABLISHED, (data) => callback(data)),
 };

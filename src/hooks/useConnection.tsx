@@ -1,43 +1,46 @@
 import { create } from 'zustand';
+import type { ConnectionData } from '../ipc/types';
+
+interface ConnectionInfo {
+  isConnected: boolean;
+  ip: string;
+  port: number;
+}
 
 interface ConnectionState {
-  masterConnection: {
-    isConnected: boolean;
-    ip: string;
-    port: number;
-  };
-  serverConnection: {
-    isConnected: boolean;
-    ip: string;
-    port: number;
-  };
-  setMasterStatus: (status: boolean) => void;
-  setServerStatus: (status: boolean) => void;
+  masterConnection: ConnectionInfo;
+  serverConnection: ConnectionInfo;
+  updateConnection: (data: ConnectionData) => void;
 }
 
 export const useConnection = create<ConnectionState>((set) => ({
   masterConnection: {
-    isConnected: true,
-    ip: '192.168.1.100',
-    port: 8080,
+    isConnected: false,
+    ip: '',
+    port: 0,
   },
   serverConnection: {
     isConnected: false,
-    ip: '10.0.0.50',
-    port: 9000,
+    ip: '',
+    port: 0,
   },
-  setMasterStatus: (status: boolean) =>
-    set(state => ({
-      masterConnection: {
-        ...state.masterConnection,
-        isConnected: status
-      }
-    })),
-  setServerStatus: (status: boolean) =>
-    set(state => ({
-      serverConnection: {
-        ...state.serverConnection,
-        isConnected: status
-      }
+  updateConnection: (data) => 
+    set((state) => ({
+      ...(data.type === 'master' 
+        ? {
+            masterConnection: {
+              isConnected: true,
+              ip: data.address,
+              port: data.port,
+            },
+          }
+        : {
+            serverConnection: {
+              isConnected: true,
+              ip: data.address,
+              port: data.port,
+            },
+          }
+      ),
     })),
 }));
