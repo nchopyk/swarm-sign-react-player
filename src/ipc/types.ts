@@ -12,7 +12,7 @@ export interface AuthScreenData {
 }
 
 export interface PlayerStartData {
-  schedule: any;
+  schedule: PlaylistData | null;
 }
 
 export interface ConnectionData {
@@ -34,3 +34,5 @@ declare global {
     IPC: IPCHandlers;
   }
 }
+
+import type { PlaylistData } from '../types/media';

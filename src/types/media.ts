@@ -3,6 +3,8 @@ export interface Schedule {
   organizationId: string;
   name: string;
   notes: string | null;
+  start?: string;
+  end?: string;
   screenId: string;
   playlistId: string;
   createdAt: string;

@@ -34,10 +34,12 @@ export function useIPC() {
   }, [navigate]);
 
   const playerStartHandler = useCallback((data: PlayerStartData) => {
-    console.log('[IPC] Player start:', data.schedule);
-    if (data.schedule) {
-      navigate('/player', { state: { schedule: data.schedule } });
-    }
+    console.log('[IPC] Player start with schedule:', data.schedule ? 'provided' : 'null');
+    navigate('/player', { 
+      state: { 
+        schedule: data.schedule 
+      }
+    });
   }, [navigate]);
 
   const connectionHandler = useCallback((data: ConnectionData) => {
