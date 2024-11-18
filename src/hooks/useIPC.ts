@@ -7,12 +7,19 @@ import type {
   LoginFailureData, 
   AuthScreenData, 
   PlayerStartData,
-  ConnectionData 
+  ConnectionData,
+  ConnectionMode,
+  MasterDevice
 } from '../ipc/types';
 
 export function useIPC() {
   const { login, logout } = useAuth();
-  const { updateConnection } = useConnection();
+  const { 
+    updateConnection, 
+    setConnectionMode, 
+    setAvailableMasters, 
+    setSelectedMaster 
+  } = useConnection();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
 
@@ -47,6 +54,21 @@ export function useIPC() {
     updateConnection(data);
   }, [updateConnection]);
 
+  const connectionModeHandler = useCallback((data: ConnectionMode) => {
+    console.log('[IPC] Connection mode updated:', data.mode);
+    setConnectionMode(data);
+  }, [setConnectionMode]);
+
+  const availableMastersHandler = useCallback((masters: Record<string, MasterDevice>) => {
+    console.log('[IPC] Available masters updated:', masters);
+    setAvailableMasters(masters);
+  }, [setAvailableMasters]);
+
+  const selectedMasterHandler = useCallback((master: MasterDevice) => {
+    console.log('[IPC] Selected master updated:', master);
+    setSelectedMaster(master);
+  }, [setSelectedMaster]);
+
   useEffect(() => {
     if (!isRegistered.current) {
       const ipc = window.IPC || IPC;
@@ -55,6 +77,9 @@ export function useIPC() {
       ipc.onShowAuthScreen(showAuthHandler);
       ipc.onPlayerStart(playerStartHandler);
       ipc.onConnectionEstablished(connectionHandler);
+      ipc.onConnectionModeUpdate(connectionModeHandler);
+      ipc.onAvailableMastersUpdate(availableMastersHandler);
+      ipc.onSelectedMasterUpdate(selectedMasterHandler);
       isRegistered.current = true;
     }
   }, [
@@ -62,6 +87,9 @@ export function useIPC() {
     loginFailHandler, 
     showAuthHandler, 
     playerStartHandler,
-    connectionHandler
+    connectionHandler,
+    connectionModeHandler,
+    availableMastersHandler,
+    selectedMasterHandler
   ]);
 }

@@ -21,12 +21,26 @@ export interface ConnectionData {
   port: number;
 }
 
+export interface MasterDevice {
+  id: string;
+  address: string;
+  port: number;
+  connections: number;
+}
+
+export interface ConnectionMode {
+  mode: 'proxy' | 'direct';
+}
+
 export interface IPCHandlers {
   onLoginSuccess: (callback: (data: LoginSuccessData) => void) => void;
   onLoginFail: (callback: (data: LoginFailureData) => void) => void;
   onShowAuthScreen: (callback: (data: AuthScreenData) => void) => void;
   onPlayerStart: (callback: (data: PlayerStartData) => void) => void;
   onConnectionEstablished: (callback: (data: ConnectionData) => void) => void;
+  onConnectionModeUpdate: (callback: (data: ConnectionMode) => void) => void;
+  onAvailableMastersUpdate: (callback: (masters: Record<string, MasterDevice>) => void) => void;
+  onSelectedMasterUpdate: (callback: (master: MasterDevice) => void) => void;
 }
 
 declare global {

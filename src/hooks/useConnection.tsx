@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ConnectionData } from '../ipc/types';
+import type { ConnectionData, ConnectionMode, MasterDevice } from '../ipc/types';
 
 interface ConnectionInfo {
   isConnected: boolean;
@@ -8,12 +8,19 @@ interface ConnectionInfo {
 }
 
 interface ConnectionState {
+  connectionMode: 'proxy' | 'direct';
   masterConnection: ConnectionInfo;
   serverConnection: ConnectionInfo;
+  availableMasters: Record<string, MasterDevice>;
+  selectedMaster: MasterDevice | null;
   updateConnection: (data: ConnectionData) => void;
+  setConnectionMode: (data: ConnectionMode) => void;
+  setAvailableMasters: (masters: Record<string, MasterDevice>) => void;
+  setSelectedMaster: (master: MasterDevice) => void;
 }
 
 export const useConnection = create<ConnectionState>((set) => ({
+  connectionMode: 'proxy',
   masterConnection: {
     isConnected: false,
     ip: '',
@@ -24,6 +31,8 @@ export const useConnection = create<ConnectionState>((set) => ({
     ip: '',
     port: 0,
   },
+  availableMasters: {},
+  selectedMaster: null,
   updateConnection: (data) => 
     set((state) => ({
       ...(data.type === 'master' 
@@ -43,4 +52,7 @@ export const useConnection = create<ConnectionState>((set) => ({
           }
       ),
     })),
+  setConnectionMode: (data) => set({ connectionMode: data.mode }),
+  setAvailableMasters: (masters) => set({ availableMasters: masters }),
+  setSelectedMaster: (master) => set({ selectedMaster: master }),
 }));
