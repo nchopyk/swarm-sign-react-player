@@ -1,14 +1,14 @@
 import React from 'react';
 import { KeyRound, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+// import { useAuth } from '../hooks/useAuth';
 
 interface LocationState {
   code?: string;
 }
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  // const { login } = useAuth();
   const location = useLocation();
   const { code } = (location.state as LocationState) || {};
   const isLoading = !code;
@@ -43,12 +43,12 @@ export default function LoginPage() {
                   Please enter this code in your authentication device to continue
                 </p>
 
-                <button
-                  onClick={() => login()}
-                  className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                >
-                  Simulate Login
-                </button>
+                {/*<button*/}
+                {/*  onClick={() => login()}*/}
+                {/*  className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"*/}
+                {/*>*/}
+                {/*  Simulate Login*/}
+                {/*</button>*/}
               </>
             )}
           </div>
