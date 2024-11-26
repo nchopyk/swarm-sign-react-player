@@ -41,6 +41,7 @@ export interface IPCHandlers {
   onConnectionModeUpdate: (callback: (data: ConnectionMode) => void) => void;
   onAvailableMastersUpdate: (callback: (masters: Record<string, MasterDevice>) => void) => void;
   onSelectedMasterUpdate: (callback: (master: MasterDevice) => void) => void;
+  onResetData: (callback: () => void) => void;
 }
 
 declare global {

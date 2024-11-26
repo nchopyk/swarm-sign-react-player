@@ -66,13 +66,13 @@ setTimeout(() => {
 
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
-  onLoginSuccess: (callback) => 
+  onLoginSuccess: (callback) =>
     mockIpcRenderer.on(ipcCommands.LOGIN_SUCCESS, (data) => callback(data)),
-  onLoginFail: (callback) => 
+  onLoginFail: (callback) =>
     mockIpcRenderer.on(ipcCommands.LOGIN_FAILURE, (data) => callback(data)),
-  onShowAuthScreen: (callback) => 
+  onShowAuthScreen: (callback) =>
     mockIpcRenderer.on(ipcCommands.SHOW_AUTH_SCREEN, (code) => callback(code)),
-  onPlayerStart: (callback) => 
+  onPlayerStart: (callback) =>
     mockIpcRenderer.on(ipcCommands.START_PLAYER, (schedule) => callback(schedule)),
   onConnectionEstablished: (callback) =>
     mockIpcRenderer.on(ipcCommands.CONNECTION_ESTABLISHED, (data) => callback(data)),
@@ -82,4 +82,6 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.UPDATE_AVAILABLE_MASTERS, (masters) => callback(masters)),
   onSelectedMasterUpdate: (callback) =>
     mockIpcRenderer.on(ipcCommands.UPDATE_SELECTED_MASTER, (master) => callback(master)),
+  onResetData: (callback) =>
+    mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
 };

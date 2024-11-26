@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { IPC } from '../ipc';
 import { useAuth } from './useAuth';
 import { useConnection } from './useConnection';
-import type { 
-  LoginFailureData, 
-  AuthScreenData, 
+import { useMediaDownload } from './useMediaDownload';
+import type {
+  LoginFailureData,
+  AuthScreenData,
   PlayerStartData,
   ConnectionData,
   ConnectionMode,
@@ -13,13 +14,14 @@ import type {
 } from '../ipc/types';
 
 export function useIPC() {
-  const { login, logout } = useAuth();
-  const { 
-    updateConnection, 
-    setConnectionMode, 
-    setAvailableMasters, 
-    setSelectedMaster 
+  const { login, logout, reset: resetAuth } = useAuth();
+  const {
+    updateConnection,
+    setConnectionMode,
+    setAvailableMasters,
+    setSelectedMaster
   } = useConnection();
+  const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
 
@@ -42,9 +44,9 @@ export function useIPC() {
 
   const playerStartHandler = useCallback((data: PlayerStartData) => {
     console.log('[IPC] Player start with schedule:', data.schedule ? 'provided' : 'null');
-    navigate('/player', { 
-      state: { 
-        schedule: data.schedule 
+    navigate('/player', {
+      state: {
+        schedule: data.schedule
       }
     });
   }, [navigate]);
@@ -69,6 +71,15 @@ export function useIPC() {
     setSelectedMaster(master);
   }, [setSelectedMaster]);
 
+  const resetDataHandler = useCallback(() => {
+    console.log('[IPC] Reset data requested');
+    // Clear all application state
+    resetAuth();
+    clearDownloads();
+    // Navigate to login page
+    navigate('/login');
+  }, [resetAuth, clearDownloads, navigate]);
+
   useEffect(() => {
     if (!isRegistered.current) {
       const ipc = window.IPC || IPC;
@@ -80,16 +91,18 @@ export function useIPC() {
       ipc.onConnectionModeUpdate(connectionModeHandler);
       ipc.onAvailableMastersUpdate(availableMastersHandler);
       ipc.onSelectedMasterUpdate(selectedMasterHandler);
+      ipc.onResetData(resetDataHandler);
       isRegistered.current = true;
     }
   }, [
-    loginSuccessHandler, 
-    loginFailHandler, 
-    showAuthHandler, 
+    loginSuccessHandler,
+    loginFailHandler,
+    showAuthHandler,
     playerStartHandler,
     connectionHandler,
     connectionModeHandler,
     availableMastersHandler,
-    selectedMasterHandler
+    selectedMasterHandler,
+    resetDataHandler
   ]);
 }
