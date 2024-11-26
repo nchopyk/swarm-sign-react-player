@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ConnectionData, ConnectionMode, MasterDevice } from '../ipc/types';
+import type { ConnectionMode, MasterDevice, MasterGatewayData } from '../ipc/types';
 
 interface ConnectionInfo {
   isConnected: boolean;
@@ -14,11 +14,13 @@ interface ConnectionState {
   serverConnection: ConnectionInfo;
   availableMasters: Record<string, MasterDevice>;
   selectedMaster: MasterDevice | null;
-  updateConnection: (data: ConnectionData) => void;
+  masterGateway: MasterGatewayData;
+  updateConnection: (data: { type: 'master' | 'server'; address: string; port: number }) => void;
   closeConnection: (type: 'master' | 'server', reason: string) => void;
   setConnectionMode: (data: ConnectionMode) => void;
   setAvailableMasters: (masters: Record<string, MasterDevice>) => void;
   setSelectedMaster: (master: MasterDevice) => void;
+  setMasterGateway: (data: MasterGatewayData) => void;
 }
 
 export const useConnection = create<ConnectionState>((set) => ({
@@ -35,6 +37,10 @@ export const useConnection = create<ConnectionState>((set) => ({
   },
   availableMasters: {},
   selectedMaster: null,
+  masterGateway: {
+    address: null,
+    port: null,
+  },
   updateConnection: (data) =>
     set((state) => ({
       ...(data.type === 'master'
@@ -78,4 +84,5 @@ export const useConnection = create<ConnectionState>((set) => ({
   setConnectionMode: (data) => set({ connectionMode: data.mode }),
   setAvailableMasters: (masters) => set({ availableMasters: masters }),
   setSelectedMaster: (master) => set({ selectedMaster: master }),
+  setMasterGateway: (data) => set({ masterGateway: data }),
 }));

@@ -9,9 +9,10 @@ import type {
   AuthScreenData,
   PlayerStartData,
   ConnectionData,
-  ConnectionClosedData,
   ConnectionMode,
-  MasterDevice
+  MasterDevice,
+  ConnectionClosedData,
+  MasterGatewayData,
 } from '../ipc/types';
 
 export function useIPC() {
@@ -21,7 +22,8 @@ export function useIPC() {
     closeConnection,
     setConnectionMode,
     setAvailableMasters,
-    setSelectedMaster
+    setSelectedMaster,
+    setMasterGateway,
   } = useConnection();
   const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
@@ -78,6 +80,11 @@ export function useIPC() {
     setSelectedMaster(master);
   }, [setSelectedMaster]);
 
+  const masterGatewayHandler = useCallback((data: MasterGatewayData) => {
+    console.log('[IPC] Master gateway updated:', data);
+    setMasterGateway(data);
+  }, [setMasterGateway]);
+
   const resetDataHandler = useCallback(() => {
     console.log('[IPC] Reset data requested');
     // Clear all application state
@@ -99,6 +106,7 @@ export function useIPC() {
       ipc.onConnectionModeUpdate(connectionModeHandler);
       ipc.onAvailableMastersUpdate(availableMastersHandler);
       ipc.onSelectedMasterUpdate(selectedMasterHandler);
+      ipc.onMasterGatewayUpdate(masterGatewayHandler);
       ipc.onResetData(resetDataHandler);
       isRegistered.current = true;
     }
@@ -112,6 +120,7 @@ export function useIPC() {
     connectionModeHandler,
     availableMastersHandler,
     selectedMasterHandler,
+    masterGatewayHandler,
     resetDataHandler
   ]);
 }

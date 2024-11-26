@@ -72,6 +72,14 @@ setTimeout(() => {
   });
 }, 10000);
 
+// Simulate master gateway update
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.UPDATE_MASTER_GATEWAY, {
+    address: '192.168.0.144',
+    port: 8002,
+  });
+}, 4000);
+
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
   onLoginSuccess: (callback) =>
@@ -92,6 +100,8 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.UPDATE_AVAILABLE_MASTERS, (masters) => callback(masters)),
   onSelectedMasterUpdate: (callback) =>
     mockIpcRenderer.on(ipcCommands.UPDATE_SELECTED_MASTER, (master) => callback(master)),
+  onMasterGatewayUpdate: (callback) =>
+    mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_GATEWAY, (data) => callback(data)),
   onResetData: (callback) =>
     mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
 };
