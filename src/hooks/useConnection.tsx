@@ -5,6 +5,7 @@ interface ConnectionInfo {
   isConnected: boolean;
   ip: string;
   port: number;
+  lastError?: string;
 }
 
 interface ConnectionState {
@@ -14,6 +15,7 @@ interface ConnectionState {
   availableMasters: Record<string, MasterDevice>;
   selectedMaster: MasterDevice | null;
   updateConnection: (data: ConnectionData) => void;
+  closeConnection: (type: 'master' | 'server', reason: string) => void;
   setConnectionMode: (data: ConnectionMode) => void;
   setAvailableMasters: (masters: Record<string, MasterDevice>) => void;
   setSelectedMaster: (master: MasterDevice) => void;
@@ -33,21 +35,42 @@ export const useConnection = create<ConnectionState>((set) => ({
   },
   availableMasters: {},
   selectedMaster: null,
-  updateConnection: (data) => 
+  updateConnection: (data) =>
     set((state) => ({
-      ...(data.type === 'master' 
-        ? {
+      ...(data.type === 'master'
+          ? {
             masterConnection: {
               isConnected: true,
               ip: data.address,
               port: data.port,
+              lastError: undefined,
             },
           }
-        : {
+          : {
             serverConnection: {
               isConnected: true,
               ip: data.address,
               port: data.port,
+              lastError: undefined,
+            },
+          }
+      ),
+    })),
+  closeConnection: (type, reason) =>
+    set((state) => ({
+      ...(type === 'master'
+          ? {
+            masterConnection: {
+              ...state.masterConnection,
+              isConnected: false,
+              lastError: reason,
+            },
+          }
+          : {
+            serverConnection: {
+              ...state.serverConnection,
+              isConnected: false,
+              lastError: reason,
             },
           }
       ),

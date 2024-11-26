@@ -21,6 +21,11 @@ export interface ConnectionData {
   port: number;
 }
 
+export interface ConnectionClosedData {
+  type: 'master' | 'server';
+  reason: string;
+}
+
 export interface MasterDevice {
   id: string;
   address: string;
@@ -38,6 +43,7 @@ export interface IPCHandlers {
   onShowAuthScreen: (callback: (data: AuthScreenData) => void) => void;
   onPlayerStart: (callback: (data: PlayerStartData) => void) => void;
   onConnectionEstablished: (callback: (data: ConnectionData) => void) => void;
+  onConnectionClosed: (callback: (data: ConnectionClosedData) => void) => void;
   onConnectionModeUpdate: (callback: (data: ConnectionMode) => void) => void;
   onAvailableMastersUpdate: (callback: (masters: Record<string, MasterDevice>) => void) => void;
   onSelectedMasterUpdate: (callback: (master: MasterDevice) => void) => void;

@@ -9,6 +9,7 @@ import type {
   AuthScreenData,
   PlayerStartData,
   ConnectionData,
+  ConnectionClosedData,
   ConnectionMode,
   MasterDevice
 } from '../ipc/types';
@@ -17,6 +18,7 @@ export function useIPC() {
   const { login, logout, reset: resetAuth } = useAuth();
   const {
     updateConnection,
+    closeConnection,
     setConnectionMode,
     setAvailableMasters,
     setSelectedMaster
@@ -56,6 +58,11 @@ export function useIPC() {
     updateConnection(data);
   }, [updateConnection]);
 
+  const connectionClosedHandler = useCallback((data: ConnectionClosedData) => {
+    console.log(`[IPC] ${data.type} connection closed:`, data.reason);
+    closeConnection(data.type, data.reason);
+  }, [closeConnection]);
+
   const connectionModeHandler = useCallback((data: ConnectionMode) => {
     console.log('[IPC] Connection mode updated:', data.mode);
     setConnectionMode(data);
@@ -88,6 +95,7 @@ export function useIPC() {
       ipc.onShowAuthScreen(showAuthHandler);
       ipc.onPlayerStart(playerStartHandler);
       ipc.onConnectionEstablished(connectionHandler);
+      ipc.onConnectionClosed(connectionClosedHandler);
       ipc.onConnectionModeUpdate(connectionModeHandler);
       ipc.onAvailableMastersUpdate(availableMastersHandler);
       ipc.onSelectedMasterUpdate(selectedMasterHandler);
@@ -100,6 +108,7 @@ export function useIPC() {
     showAuthHandler,
     playerStartHandler,
     connectionHandler,
+    connectionClosedHandler,
     connectionModeHandler,
     availableMastersHandler,
     selectedMasterHandler,

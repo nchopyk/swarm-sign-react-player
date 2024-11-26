@@ -64,6 +64,14 @@ setTimeout(() => {
   });
 }, 3500);
 
+// Simulate connection closed after 10 seconds
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.CONNECTION_CLOSED, {
+    type: 'master',
+    reason: 'Connection lost',
+  });
+}, 10000);
+
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
   onLoginSuccess: (callback) =>
@@ -76,6 +84,8 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.START_PLAYER, (schedule) => callback(schedule)),
   onConnectionEstablished: (callback) =>
     mockIpcRenderer.on(ipcCommands.CONNECTION_ESTABLISHED, (data) => callback(data)),
+  onConnectionClosed: (callback) =>
+    mockIpcRenderer.on(ipcCommands.CONNECTION_CLOSED, (data) => callback(data)),
   onConnectionModeUpdate: (callback) =>
     mockIpcRenderer.on(ipcCommands.UPDATE_CONNECTION_MODE, (data) => callback(data)),
   onAvailableMastersUpdate: (callback) =>
