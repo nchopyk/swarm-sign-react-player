@@ -42,6 +42,12 @@ export interface MasterGatewayData {
   port: number | null;
 }
 
+export interface MasterWebSocketData {
+  address: string | null;
+  port: number | null;
+  connections: number | null;
+}
+
 export interface IPCHandlers {
   onLoginSuccess: (callback: (data: LoginSuccessData) => void) => void;
   onLoginFail: (callback: (data: LoginFailureData) => void) => void;
@@ -53,6 +59,7 @@ export interface IPCHandlers {
   onAvailableMastersUpdate: (callback: (masters: Record<string, MasterDevice>) => void) => void;
   onSelectedMasterUpdate: (callback: (master: MasterDevice) => void) => void;
   onMasterGatewayUpdate: (callback: (data: MasterGatewayData) => void) => void;
+  onMasterWebSocketUpdate: (callback: (data: MasterWebSocketData) => void) => void;
   onResetData: (callback: () => void) => void;
 }
 

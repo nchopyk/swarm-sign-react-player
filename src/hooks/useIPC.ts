@@ -13,6 +13,7 @@ import type {
   MasterDevice,
   ConnectionClosedData,
   MasterGatewayData,
+  MasterWebSocketData,
 } from '../ipc/types';
 
 export function useIPC() {
@@ -24,6 +25,7 @@ export function useIPC() {
     setAvailableMasters,
     setSelectedMaster,
     setMasterGateway,
+    setMasterWebSocket,
   } = useConnection();
   const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
@@ -85,6 +87,11 @@ export function useIPC() {
     setMasterGateway(data);
   }, [setMasterGateway]);
 
+  const masterWebSocketHandler = useCallback((data: MasterWebSocketData) => {
+    console.log('[IPC] Master WebSocket updated:', data);
+    setMasterWebSocket(data);
+  }, [setMasterWebSocket]);
+
   const resetDataHandler = useCallback(() => {
     console.log('[IPC] Reset data requested');
     // Clear all application state
@@ -107,6 +114,7 @@ export function useIPC() {
       ipc.onAvailableMastersUpdate(availableMastersHandler);
       ipc.onSelectedMasterUpdate(selectedMasterHandler);
       ipc.onMasterGatewayUpdate(masterGatewayHandler);
+      ipc.onMasterWebSocketUpdate(masterWebSocketHandler);
       ipc.onResetData(resetDataHandler);
       isRegistered.current = true;
     }
@@ -121,6 +129,7 @@ export function useIPC() {
     availableMastersHandler,
     selectedMasterHandler,
     masterGatewayHandler,
+    masterWebSocketHandler,
     resetDataHandler
   ]);
 }
