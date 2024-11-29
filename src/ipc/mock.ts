@@ -89,6 +89,49 @@ setTimeout(() => {
   });
 }, 4500);
 
+// Simulate topology update
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.UPDATE_MASTER_TOPOLOGY, {
+    ip: '192.168.0.104',
+    port: 8002,
+    rating: 9,
+    connectedClients: [
+      {
+        ip: '192.168.0.105',
+        port: 8003,
+        rating: 7,
+        connectedClients: [
+          {
+            ip: '192.168.0.107',
+            port: 8007,
+            rating: 4,
+            connectedClients: null,
+          },
+          {
+            ip: '192.168.0.108',
+            port: 8008,
+            rating: 8,
+            connectedClients: null,
+          },
+        ],
+      },
+      {
+        ip: '192.168.0.106',
+        port: 8004,
+        rating: 6,
+        connectedClients: [
+          {
+            ip: '192.168.0.110',
+            port: 8010,
+            rating: 9,
+            connectedClients: null,
+          },
+        ],
+      },
+    ],
+  });
+}, 5000);
+
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
   onLoginSuccess: (callback) =>
@@ -113,6 +156,8 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_GATEWAY, (data) => callback(data)),
   onMasterWebSocketUpdate: (callback) =>
     mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_WEB_SOCKET, (data) => callback(data)),
+  onMasterTopologyUpdate: (callback) =>
+    mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_TOPOLOGY, (data) => callback(data)),
   onResetData: (callback) =>
     mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
 };

@@ -48,6 +48,12 @@ export interface MasterWebSocketData {
   connections: number | null;
 }
 
+export interface TopologyData {
+  ip: string;
+  port: number;
+  connectedClients: TopologyData[] | null;
+}
+
 export interface IPCHandlers {
   onLoginSuccess: (callback: (data: LoginSuccessData) => void) => void;
   onLoginFail: (callback: (data: LoginFailureData) => void) => void;
@@ -60,6 +66,7 @@ export interface IPCHandlers {
   onSelectedMasterUpdate: (callback: (master: MasterDevice) => void) => void;
   onMasterGatewayUpdate: (callback: (data: MasterGatewayData) => void) => void;
   onMasterWebSocketUpdate: (callback: (data: MasterWebSocketData) => void) => void;
+  onMasterTopologyUpdate: (callback: (data: TopologyData) => void) => void;
   onResetData: (callback: () => void) => void;
 }
 

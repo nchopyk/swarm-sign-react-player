@@ -4,6 +4,7 @@ import { IPC } from '../ipc';
 import { useAuth } from './useAuth';
 import { useConnection } from './useConnection';
 import { useMediaDownload } from './useMediaDownload';
+import { useTopology } from './useTopology';
 import type {
   LoginFailureData,
   AuthScreenData,
@@ -14,6 +15,7 @@ import type {
   ConnectionClosedData,
   MasterGatewayData,
   MasterWebSocketData,
+  TopologyData,
 } from '../ipc/types';
 
 export function useIPC() {
@@ -27,6 +29,7 @@ export function useIPC() {
     setMasterGateway,
     setMasterWebSocket,
   } = useConnection();
+  const { setTopology } = useTopology();
   const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
@@ -92,12 +95,15 @@ export function useIPC() {
     setMasterWebSocket(data);
   }, [setMasterWebSocket]);
 
+  const masterTopologyHandler = useCallback((data: TopologyData) => {
+    console.log('[IPC] Master topology updated:', data);
+    setTopology(data);
+  }, [setTopology]);
+
   const resetDataHandler = useCallback(() => {
     console.log('[IPC] Reset data requested');
-    // Clear all application state
     resetAuth();
     clearDownloads();
-    // Navigate to login page
     navigate('/login');
   }, [resetAuth, clearDownloads, navigate]);
 
@@ -115,6 +121,7 @@ export function useIPC() {
       ipc.onSelectedMasterUpdate(selectedMasterHandler);
       ipc.onMasterGatewayUpdate(masterGatewayHandler);
       ipc.onMasterWebSocketUpdate(masterWebSocketHandler);
+      ipc.onMasterTopologyUpdate(masterTopologyHandler);
       ipc.onResetData(resetDataHandler);
       isRegistered.current = true;
     }
@@ -130,6 +137,7 @@ export function useIPC() {
     selectedMasterHandler,
     masterGatewayHandler,
     masterWebSocketHandler,
+    masterTopologyHandler,
     resetDataHandler
   ]);
 }
