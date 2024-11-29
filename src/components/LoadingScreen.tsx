@@ -16,9 +16,9 @@ function MasterDeviceItem({ master, isSelected }: { master: MasterDevice, isSele
           </span>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-400">
-            {master.connections} connections
-          </span>
+          {/*<span className="text-xs text-gray-400">*/}
+          {/*  {master.connections} connections*/}
+          {/*</span>*/}
           {isSelected && (
             <div className="w-2 h-2 rounded-full bg-blue-400" />
           )}
@@ -29,7 +29,7 @@ function MasterDeviceItem({ master, isSelected }: { master: MasterDevice, isSele
 }
 
 export default function LoadingScreen() {
-  const { 
+  const {
     connectionMode,
     masterConnection,
     serverConnection,
@@ -46,13 +46,13 @@ export default function LoadingScreen() {
       <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 max-w-md w-full mx-4">
         <div className="flex flex-col items-center space-y-6">
           <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
-          
+
           <div className="text-center space-y-2">
             <h1 className="text-xl font-semibold text-white">
               Establishing Connection
             </h1>
             <p className="text-sm text-gray-400">
-              {isConnected 
+              {isConnected
                 ? "Connection established, initializing application..."
                 : `Attempting ${connectionMode} connection...`}
             </p>
@@ -73,7 +73,7 @@ export default function LoadingScreen() {
                   {connectionMode === 'proxy' ? 'Proxy' : 'Direct'}
                 </span>
               </div>
-              
+
               <div className="flex items-center space-x-2 text-xs text-gray-400">
                 {connectionMode === 'proxy' ? (
                   <>
@@ -104,7 +104,7 @@ export default function LoadingScreen() {
                 <div className="space-y-2">
                   {hasMasters ? (
                     masters.map(master => (
-                      <MasterDeviceItem 
+                      <MasterDeviceItem
                         key={master.id}
                         master={master}
                         isSelected={selectedMaster?.id === master.id}
@@ -140,7 +140,7 @@ export default function LoadingScreen() {
                     <span className="text-xs text-green-400">Connected</span>
                   </div>
                 </div>
-                
+
                 <div className="mt-2 text-xs text-gray-400">
                   {connectionMode === 'proxy' ? (
                     <p>{masterConnection.ip}:{masterConnection.port}</p>
