@@ -5,6 +5,7 @@ import { useAuth } from './useAuth';
 import { useConnection } from './useConnection';
 import { useMediaDownload } from './useMediaDownload';
 import { useTopology } from './useTopology';
+import { useMasterRating } from './useMasterRating';
 import type {
   LoginFailureData,
   AuthScreenData,
@@ -16,6 +17,7 @@ import type {
   MasterGatewayData,
   MasterWebSocketData,
   TopologyData,
+  MasterRatingData,
 } from '../ipc/types';
 
 export function useIPC() {
@@ -30,6 +32,7 @@ export function useIPC() {
     setMasterWebSocket,
   } = useConnection();
   const { setTopology } = useTopology();
+  const { setRating } = useMasterRating();
   const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
@@ -100,6 +103,11 @@ export function useIPC() {
     setTopology(data);
   }, [setTopology]);
 
+  const masterRatingHandler = useCallback((data: MasterRatingData) => {
+    console.log('[IPC] Master rating updated:', data);
+    setRating(data);
+  }, [setRating]);
+
   const resetDataHandler = useCallback(() => {
     console.log('[IPC] Reset data requested');
     resetAuth();
@@ -122,6 +130,7 @@ export function useIPC() {
       ipc.onMasterGatewayUpdate(masterGatewayHandler);
       ipc.onMasterWebSocketUpdate(masterWebSocketHandler);
       ipc.onMasterTopologyUpdate(masterTopologyHandler);
+      ipc.onMasterRatingUpdate(masterRatingHandler);
       ipc.onResetData(resetDataHandler);
       isRegistered.current = true;
     }
@@ -138,6 +147,7 @@ export function useIPC() {
     masterGatewayHandler,
     masterWebSocketHandler,
     masterTopologyHandler,
+    masterRatingHandler,
     resetDataHandler
   ]);
 }

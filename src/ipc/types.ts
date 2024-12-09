@@ -52,6 +52,39 @@ export interface TopologyData {
   ip: string;
   port: number;
   connectedClients: TopologyData[] | null;
+  rating: number | null;
+}
+
+export interface MasterRatingData {
+  connectedDevices: {
+    count: number;
+    normalized: number;
+  };
+  wifiSignal: {
+    dbm: number;
+    normalized: number;
+  };
+  processorLoad: {
+    percent: number;
+    normalized: number;
+  };
+  freeRam: {
+    mb: number;
+    normalized: number;
+  };
+  totalRam: {
+    mb: number;
+    normalized: number;
+  };
+  uptime: {
+    seconds: number;
+    normalized: number;
+  };
+  internetConnection: {
+    type: 'wired' | 'wireless';
+    normalized: number;
+  };
+  rating: number;
 }
 
 export interface IPCHandlers {
@@ -67,6 +100,7 @@ export interface IPCHandlers {
   onMasterGatewayUpdate: (callback: (data: MasterGatewayData) => void) => void;
   onMasterWebSocketUpdate: (callback: (data: MasterWebSocketData) => void) => void;
   onMasterTopologyUpdate: (callback: (data: TopologyData) => void) => void;
+  onMasterRatingUpdate: (callback: (data: MasterRatingData) => void) => void;
   onResetData: (callback: () => void) => void;
 }
 

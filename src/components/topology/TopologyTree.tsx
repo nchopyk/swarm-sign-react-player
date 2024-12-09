@@ -26,7 +26,15 @@ export default function TopologyTree({ topology, level = 0 }: TopologyTreeProps)
                   topology.rating >= 0.7 ? 'bg-green-500/20 text-green-400' :
                     'bg-yellow-500/20 text-yellow-400'
               }`}>
-                Rating: {topology.rating}
+                Rating: {topology.rating.toFixed(4)}
+              </span>
+            </>
+          )}
+          {topology.clientId && (
+            <>
+              <span className="text-gray-500">|</span>
+              <span className="text-xs text-gray-400">
+                ID: {topology.clientId}
               </span>
             </>
           )}
@@ -35,9 +43,9 @@ export default function TopologyTree({ topology, level = 0 }: TopologyTreeProps)
 
       {hasChildren && (
         <div className="border-l-2 border-gray-800 ml-2 pl-4 mt-2">
-          {topology.connectedClients!.map((client, index) => (
+          {topology.connectedClients.map((client) => (
             <TopologyTree
-              key={`${client.ip}:${client.port}`}
+              key={`${client.clientId}-${client.ip}-${client.port}`}
               topology={client}
               level={level + 1}
             />

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Network, Globe, Wifi, WifiOff, Loader2, Router, Share2, Users, NetworkIcon } from 'lucide-react';
+import { Network, Globe, Wifi, WifiOff, Loader2, Router, Share2, Users, NetworkIcon, Info } from 'lucide-react';
 import { useConnection } from '../hooks/useConnection';
 import { useTopology } from '../hooks/useTopology';
+import { useMasterRating } from '../hooks/useMasterRating';
 import TopologyModal from './topology/TopologyModal';
+import MasterInfoModal from './master/MasterInfoModal';
 
 export default function ConnectionPanel() {
   const { masterConnection, serverConnection, masterGateway, masterWebSocket } = useConnection();
   const { topology } = useTopology();
+  const { rating } = useMasterRating();
   const [showTopology, setShowTopology] = useState(false);
+  const [showMasterInfo, setShowMasterInfo] = useState(false);
 
   const activeConnection = masterConnection.isConnected
     ? { type: 'Master', ...masterConnection, icon: Network }
@@ -127,6 +131,16 @@ export default function ConnectionPanel() {
                     {masterGateway.port || 'N/A'}
                   </code>
                 </div>
+
+                {isGatewayEnabled && rating && (
+                  <button
+                    onClick={() => setShowMasterInfo(true)}
+                    className="mt-1 w-full flex items-center justify-center space-x-2 px-2 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded transition-colors"
+                  >
+                    <Info className="w-3 h-3" />
+                    <span className="text-[10px]">Master Info</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -190,10 +204,17 @@ export default function ConnectionPanel() {
         </div>
       </div>
 
-      {showTopology && (
+      {showTopology && topology && (
         <TopologyModal
           topology={topology}
           onClose={() => setShowTopology(false)}
+        />
+      )}
+
+      {showMasterInfo && rating && (
+        <MasterInfoModal
+          data={rating}
+          onClose={() => setShowMasterInfo(false)}
         />
       )}
     </>

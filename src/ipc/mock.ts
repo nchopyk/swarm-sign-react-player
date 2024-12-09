@@ -94,23 +94,23 @@ setTimeout(() => {
   mockIpcRenderer.emit(ipcCommands.UPDATE_MASTER_TOPOLOGY, {
     ip: '192.168.0.104',
     port: 8002,
-    rating: 9,
+    rating: 0.9,
     connectedClients: [
       {
         ip: '192.168.0.105',
         port: 8003,
-        rating: 7,
+        rating: 0.7,
         connectedClients: [
           {
             ip: '192.168.0.107',
             port: 8007,
-            rating: 4,
+            rating: 0.4,
             connectedClients: null,
           },
           {
             ip: '192.168.0.108',
             port: 8008,
-            rating: 8,
+            rating: 0.8,
             connectedClients: null,
           },
         ],
@@ -118,12 +118,12 @@ setTimeout(() => {
       {
         ip: '192.168.0.106',
         port: 8004,
-        rating: 6,
+        rating: 0.6,
         connectedClients: [
           {
             ip: '192.168.0.110',
             port: 8010,
-            rating: 9,
+            rating: 0.9,
             connectedClients: null,
           },
         ],
@@ -131,6 +131,41 @@ setTimeout(() => {
     ],
   });
 }, 5000);
+
+// Simulate master rating update
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.UPDATE_MASTER_RATING, {
+    connectedDevices: {
+      count: 42,
+      normalized: 0.84,
+    },
+    wifiSignal: {
+      dbm: -65,
+      normalized: 0.75,
+    },
+    processorLoad: {
+      percent: 45,
+      normalized: 0.65,
+    },
+    freeRam: {
+      mb: 2048,
+      normalized: 0.82,
+    },
+    totalRam: {
+      mb: 8192,
+      normalized: 0.95,
+    },
+    uptime: {
+      seconds: 345600,
+      normalized: 0.88,
+    },
+    internetConnection: {
+      type: 'wireless',
+      normalized: 0.78,
+    },
+    rating: 0.81,
+  });
+}, 5500);
 
 // Mock IPC implementation for browser environment
 export const mockIPC: IPCHandlers = {
@@ -158,6 +193,8 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_WEB_SOCKET, (data) => callback(data)),
   onMasterTopologyUpdate: (callback) =>
     mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_TOPOLOGY, (data) => callback(data)),
+  onMasterRatingUpdate: (callback) =>
+    mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_RATING, (data) => callback(data)),
   onResetData: (callback) =>
     mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
 };
