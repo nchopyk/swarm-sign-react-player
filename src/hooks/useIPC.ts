@@ -6,6 +6,7 @@ import { useConnection } from './useConnection';
 import { useMediaDownload } from './useMediaDownload';
 import { useTopology } from './useTopology';
 import { useMasterRating } from './useMasterRating';
+import { useInstanceId } from './useInstanceId';
 import { ipcCommands } from '../ipc/commands';
 import type {
   LoginFailureData,
@@ -35,6 +36,7 @@ export function useIPC() {
   } = useConnection();
   const { setTopology } = useTopology();
   const { setRating } = useMasterRating();
+  const { setInstanceId } = useInstanceId();
   const { clearDownloads } = useMediaDownload();
   const navigate = useNavigate();
   const isRegistered = useRef(false);
@@ -123,6 +125,11 @@ export function useIPC() {
     setSearchingServer(true);
   }, [setSearchingServer]);
 
+  const setInstanceIdHandler = useCallback((id: number) => {
+    console.log('[IPC] Instance ID set:', id);
+    setInstanceId(id);
+  }, [setInstanceId]);
+
   useEffect(() => {
     if (!isRegistered.current) {
       const ipc = window.IPC || IPC;
@@ -141,6 +148,7 @@ export function useIPC() {
       ipc.onMasterRatingUpdate(masterRatingHandler);
       ipc.onResetData(resetDataHandler);
       ipc.onInitServerSearch(initServerSearchHandler);
+      ipc.onSetInstanceId(setInstanceIdHandler);
       isRegistered.current = true;
     }
   }, [
@@ -158,6 +166,7 @@ export function useIPC() {
     masterTopologyHandler,
     masterRatingHandler,
     resetDataHandler,
-    initServerSearchHandler
+    initServerSearchHandler,
+    setInstanceIdHandler
   ]);
 }

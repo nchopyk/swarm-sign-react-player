@@ -106,6 +106,7 @@ export interface IPCHandlers {
   onMasterRatingUpdate: (callback: (data: MasterRatingData) => void) => void;
   onResetData: (callback: () => void) => void;
   onInitServerSearch: (callback: () => void) => void;
+  onSetInstanceId: (callback: (id: number) => void) => void;
 }
 
 declare global {

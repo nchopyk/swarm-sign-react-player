@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import PlayerPage from './pages/PlayerPage';
 import LoadingScreen from './components/LoadingScreen';
+import InstanceIdBadge from './components/InstanceIdBadge';
 import { useAuth } from './hooks/useAuth';
 import { useIPC } from './hooks/useIPC';
 import { useConnection } from './hooks/useConnection';
@@ -28,24 +29,32 @@ function App() {
     }
   }, [masterConnection.isConnected, serverConnection.isConnected, isSearchingServer]);
 
-  if (!isInitialized || isSearchingServer) {
-    return <LoadingScreen />;
-  }
-
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={
-          isLoggedIn ? <Navigate to="/player" /> : <Navigate to="/login" />
-        } />
-        <Route path="login" element={
-          isLoggedIn ? <Navigate to="/player" /> : <LoginPage />
-        } />
-        <Route path="player" element={
-          isLoggedIn ? <PlayerPage /> : <Navigate to="/login" />
-        } />
-      </Route>
-    </Routes>
+    <div className="relative min-h-screen">
+      {!isInitialized || isSearchingServer ? (
+        <>
+          <LoadingScreen />
+          <InstanceIdBadge />
+        </>
+      ) : (
+        <>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={
+                isLoggedIn ? <Navigate to="/player" /> : <Navigate to="/login" />
+              } />
+              <Route path="login" element={
+                isLoggedIn ? <Navigate to="/player" /> : <LoginPage />
+              } />
+              <Route path="player" element={
+                isLoggedIn ? <PlayerPage /> : <Navigate to="/login" />
+              } />
+            </Route>
+          </Routes>
+          <InstanceIdBadge />
+        </>
+      )}
+    </div>
   );
 }
 

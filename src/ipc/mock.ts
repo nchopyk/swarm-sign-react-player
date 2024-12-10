@@ -26,6 +26,11 @@ setTimeout(() => {
   mockIpcRenderer.emit(ipcCommands.UPDATE_CONNECTION_MODE, { mode: 'proxy' });
 }, 500);
 
+// Simulate instance ID assignment
+setTimeout(() => {
+  mockIpcRenderer.emit(ipcCommands.SET_INSTANCE_ID, 42);
+}, 1000);
+
 // Simulate master devices discovery
 setTimeout(() => {
   const masters = {
@@ -184,4 +189,6 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
   onInitServerSearch: (callback) =>
     mockIpcRenderer.on(ipcCommands.INIT_SERVER_SEARCH, () => callback()),
+  onSetInstanceId: (callback) =>
+    mockIpcRenderer.on(ipcCommands.SET_INSTANCE_ID, (id) => callback(id)),
 };
