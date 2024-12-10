@@ -13,4 +13,5 @@ export const ipcCommands = {
   UPDATE_MASTER_TOPOLOGY: 'UPDATE_MASTER_TOPOLOGY',
   UPDATE_MASTER_RATING: 'UPDATE_MASTER_RATING',
   RESET_DATA: 'RESET_DATA',
+  INIT_SERVER_SEARCH: 'init-server-search',
 } as const;

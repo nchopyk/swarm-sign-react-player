@@ -10,19 +10,25 @@ import { useConnection } from './hooks/useConnection';
 
 function App() {
   const { isLoggedIn } = useAuth();
-  const { masterConnection, serverConnection } = useConnection();
+  const { masterConnection, serverConnection, isSearchingServer } = useConnection();
   const [isInitialized, setIsInitialized] = useState(false);
   useIPC();
 
   useEffect(() => {
+    // Reset initialization when server search starts
+    if (isSearchingServer) {
+      setIsInitialized(false);
+      return;
+    }
+
     // Consider the app initialized when at least one connection is established
     if (masterConnection.isConnected || serverConnection.isConnected) {
       const timer = setTimeout(() => setIsInitialized(true), 1000);
       return () => clearTimeout(timer);
     }
-  }, [masterConnection.isConnected, serverConnection.isConnected]);
+  }, [masterConnection.isConnected, serverConnection.isConnected, isSearchingServer]);
 
-  if (!isInitialized) {
+  if (!isInitialized || isSearchingServer) {
     return <LoadingScreen />;
   }
 

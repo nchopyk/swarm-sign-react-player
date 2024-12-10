@@ -16,6 +16,7 @@ interface ConnectionState {
   selectedMaster: MasterDevice | null;
   masterGateway: MasterGatewayData;
   masterWebSocket: MasterWebSocketData;
+  isSearchingServer: boolean;
   updateConnection: (data: { type: 'master' | 'server'; address: string; port: number }) => void;
   closeConnection: (type: 'master' | 'server', reason: string) => void;
   setConnectionMode: (data: ConnectionMode) => void;
@@ -23,6 +24,7 @@ interface ConnectionState {
   setSelectedMaster: (master: MasterDevice) => void;
   setMasterGateway: (data: MasterGatewayData) => void;
   setMasterWebSocket: (data: MasterWebSocketData) => void;
+  setSearchingServer: (isSearching: boolean) => void;
 }
 
 export const useConnection = create<ConnectionState>((set) => ({
@@ -48,6 +50,7 @@ export const useConnection = create<ConnectionState>((set) => ({
     port: null,
     connections: null,
   },
+  isSearchingServer: false,
   updateConnection: (data) =>
     set((state) => ({
       ...(data.type === 'master'
@@ -93,4 +96,5 @@ export const useConnection = create<ConnectionState>((set) => ({
   setSelectedMaster: (master) => set({ selectedMaster: master }),
   setMasterGateway: (data) => set({ masterGateway: data }),
   setMasterWebSocket: (data) => set({ masterWebSocket: data }),
+  setSearchingServer: (isSearching) => set({ isSearchingServer: isSearching }),
 }));

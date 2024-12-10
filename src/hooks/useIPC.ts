@@ -6,6 +6,7 @@ import { useConnection } from './useConnection';
 import { useMediaDownload } from './useMediaDownload';
 import { useTopology } from './useTopology';
 import { useMasterRating } from './useMasterRating';
+import { ipcCommands } from '../ipc/commands';
 import type {
   LoginFailureData,
   AuthScreenData,
@@ -30,6 +31,7 @@ export function useIPC() {
     setSelectedMaster,
     setMasterGateway,
     setMasterWebSocket,
+    setSearchingServer,
   } = useConnection();
   const { setTopology } = useTopology();
   const { setRating } = useMasterRating();
@@ -66,7 +68,8 @@ export function useIPC() {
   const connectionHandler = useCallback((data: ConnectionData) => {
     console.log(`[IPC] ${data.type} connection established:`, data);
     updateConnection(data);
-  }, [updateConnection]);
+    setSearchingServer(false);
+  }, [updateConnection, setSearchingServer]);
 
   const connectionClosedHandler = useCallback((data: ConnectionClosedData) => {
     console.log(`[IPC] ${data.type} connection closed:`, data.reason);
@@ -115,6 +118,11 @@ export function useIPC() {
     navigate('/login');
   }, [resetAuth, clearDownloads, navigate]);
 
+  const initServerSearchHandler = useCallback(() => {
+    console.log('[IPC] Server search initiated');
+    setSearchingServer(true);
+  }, [setSearchingServer]);
+
   useEffect(() => {
     if (!isRegistered.current) {
       const ipc = window.IPC || IPC;
@@ -132,6 +140,7 @@ export function useIPC() {
       ipc.onMasterTopologyUpdate(masterTopologyHandler);
       ipc.onMasterRatingUpdate(masterRatingHandler);
       ipc.onResetData(resetDataHandler);
+      ipc.onInitServerSearch(initServerSearchHandler);
       isRegistered.current = true;
     }
   }, [
@@ -148,6 +157,7 @@ export function useIPC() {
     masterWebSocketHandler,
     masterTopologyHandler,
     masterRatingHandler,
-    resetDataHandler
+    resetDataHandler,
+    initServerSearchHandler
   ]);
 }

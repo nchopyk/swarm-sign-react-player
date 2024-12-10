@@ -16,9 +16,9 @@ function MasterDeviceItem({ master, isSelected }: { master: MasterDevice, isSele
           </span>
         </div>
         <div className="flex items-center space-x-2">
-          {/*<span className="text-xs text-gray-400">*/}
-          {/*  {master.connections} connections*/}
-          {/*</span>*/}
+          <span className="text-xs text-gray-400">
+            {master.connections} connections
+          </span>
           {isSelected && (
             <div className="w-2 h-2 rounded-full bg-blue-400" />
           )}
@@ -34,7 +34,8 @@ export default function LoadingScreen() {
     masterConnection,
     serverConnection,
     availableMasters,
-    selectedMaster
+    selectedMaster,
+    isSearchingServer
   } = useConnection();
 
   const isConnected = masterConnection.isConnected || serverConnection.isConnected;
@@ -49,12 +50,14 @@ export default function LoadingScreen() {
 
           <div className="text-center space-y-2">
             <h1 className="text-xl font-semibold text-white">
-              Establishing Connection
+              {isSearchingServer ? "Searching for Server" : "Establishing Connection"}
             </h1>
             <p className="text-sm text-gray-400">
               {isConnected
                 ? "Connection established, initializing application..."
-                : `Attempting ${connectionMode} connection...`}
+                : isSearchingServer
+                  ? "Looking for available servers..."
+                  : `Attempting ${connectionMode} connection...`}
             </p>
           </div>
 
@@ -66,8 +69,8 @@ export default function LoadingScreen() {
                   Connection Mode
                 </span>
                 <span className={`text-xs px-2 py-1 rounded-full ${
-                  connectionMode === 'proxy' 
-                    ? 'bg-blue-500/20 text-blue-400' 
+                  connectionMode === 'proxy'
+                    ? 'bg-blue-500/20 text-blue-400'
                     : 'bg-purple-500/20 text-purple-400'
                 }`}>
                   {connectionMode === 'proxy' ? 'Proxy' : 'Direct'}

@@ -48,12 +48,15 @@ export interface MasterWebSocketData {
   connections: number | null;
 }
 
-export interface TopologyData {
+export interface TopologyNode {
   ip: string;
-  port: number;
-  connectedClients: TopologyData[] | null;
+  port: number | null;
+  clientId: string;
   rating: number | null;
+  connectedClients: TopologyNode[];
 }
+
+export interface TopologyData extends TopologyNode {}
 
 export interface MasterRatingData {
   connectedDevices: {
@@ -102,6 +105,7 @@ export interface IPCHandlers {
   onMasterTopologyUpdate: (callback: (data: TopologyData) => void) => void;
   onMasterRatingUpdate: (callback: (data: MasterRatingData) => void) => void;
   onResetData: (callback: () => void) => void;
+  onInitServerSearch: (callback: () => void) => void;
 }
 
 declare global {

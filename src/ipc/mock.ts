@@ -70,6 +70,8 @@ setTimeout(() => {
     type: 'master',
     reason: 'Connection lost',
   });
+  // Simulate server search initiation
+  mockIpcRenderer.emit(ipcCommands.INIT_SERVER_SEARCH);
 }, 10000);
 
 // Simulate master gateway update
@@ -94,40 +96,23 @@ setTimeout(() => {
   mockIpcRenderer.emit(ipcCommands.UPDATE_MASTER_TOPOLOGY, {
     ip: '192.168.0.104',
     port: 8002,
-    rating: 0.9,
+    clientId: '948928a9-a204-472a-bfd6-424f6bb454ce',
+    rating: 0.3502,
     connectedClients: [
       {
         ip: '192.168.0.105',
-        port: 8003,
-        rating: 0.7,
-        connectedClients: [
-          {
-            ip: '192.168.0.107',
-            port: 8007,
-            rating: 0.4,
-            connectedClients: null,
-          },
-          {
-            ip: '192.168.0.108',
-            port: 8008,
-            rating: 0.8,
-            connectedClients: null,
-          },
-        ],
+        port: 4161,
+        clientId: '29afd3f8-422a-460e-b209-1cedf63f8645',
+        rating: 0.5492,
+        connectedClients: []
       },
       {
         ip: '192.168.0.106',
-        port: 8004,
-        rating: 0.6,
-        connectedClients: [
-          {
-            ip: '192.168.0.110',
-            port: 8010,
-            rating: 0.9,
-            connectedClients: null,
-          },
-        ],
-      },
+        port: null,
+        clientId: 'abf618b9-1163-434c-8409-42341172fb99',
+        rating: 0.5609,
+        connectedClients: []
+      }
     ],
   });
 }, 5000);
@@ -197,4 +182,6 @@ export const mockIPC: IPCHandlers = {
     mockIpcRenderer.on(ipcCommands.UPDATE_MASTER_RATING, (data) => callback(data)),
   onResetData: (callback) =>
     mockIpcRenderer.on(ipcCommands.RESET_DATA, () => callback()),
+  onInitServerSearch: (callback) =>
+    mockIpcRenderer.on(ipcCommands.INIT_SERVER_SEARCH, () => callback()),
 };
