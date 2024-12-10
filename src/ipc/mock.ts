@@ -33,13 +33,13 @@ setTimeout(() => {
       id: 'master-1',
       address: '192.168.1.100',
       port: 8080,
-      connections: 42,
+      rating: 0.85,
     },
     'master-2': {
       id: 'master-2',
       address: '192.168.1.101',
       port: 8080,
-      connections: 27,
+      rating: 0.65,
     },
   };
   mockIpcRenderer.emit(ipcCommands.UPDATE_AVAILABLE_MASTERS, masters);
@@ -51,7 +51,7 @@ setTimeout(() => {
     id: 'master-1',
     address: '192.168.1.100',
     port: 8080,
-    connections: 42,
+    rating: 0.85,
   });
 }, 2500);
 

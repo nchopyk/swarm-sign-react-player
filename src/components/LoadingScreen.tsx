@@ -16,9 +16,15 @@ function MasterDeviceItem({ master, isSelected }: { master: MasterDevice, isSele
           </span>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-400">
-            {master.connections} connections
-          </span>
+          {typeof master.rating === 'number' && (
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              master.rating <= 0.4 ? 'bg-red-500/20 text-red-400' :
+                master.rating >= 0.7 ? 'bg-green-500/20 text-green-400' :
+                  'bg-yellow-500/20 text-yellow-400'
+            }`}>
+              Rating: {master.rating.toFixed(4)}
+            </span>
+          )}
           {isSelected && (
             <div className="w-2 h-2 rounded-full bg-blue-400" />
           )}

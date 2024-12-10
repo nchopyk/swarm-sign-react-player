@@ -30,7 +30,7 @@ export interface MasterDevice {
   id: string;
   address: string;
   port: number;
-  connections: number;
+  rating: number;
 }
 
 export interface ConnectionMode {
